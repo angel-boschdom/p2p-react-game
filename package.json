@@ -1,5 +1,9 @@
 {
   "homepage": "https://angel-boschdom.github.io/p2p-react-game",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angel-boschdom/p2p-react-game.git"
+  },
   "name": "p2p-react-game",
   "version": "0.1.0",
   "private": true,
