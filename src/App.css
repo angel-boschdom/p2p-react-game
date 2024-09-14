@@ -1,0 +1,21 @@
+.App {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .role-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  textarea {
+    margin: 10px 0;
+  }
