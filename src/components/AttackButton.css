@@ -1,0 +1,19 @@
+/* /src/components/AttackButton.css */
+.attack-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: crimson;
+    color: white;
+    font-size: 18px;
+    border: none;
+    outline: none;
+  }
+  
+  .attack-button:active {
+    background-color: darkred;
+  }
+  

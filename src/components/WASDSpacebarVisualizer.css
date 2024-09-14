@@ -1,0 +1,33 @@
+/* /src/components/WASDSpacebarVisualizer.css */
+.wasd-visualizer {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    text-align: center;
+  }
+  
+  .key {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+    line-height: 40px;
+    border: 2px solid #333;
+    border-radius: 5px;
+    background-color: #eee;
+  }
+  
+  .key.active {
+    background-color: #333;
+    color: #fff;
+  }
+  
+  .key-row {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .spacebar {
+    width: 130px;
+  }
+  

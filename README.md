@@ -6,6 +6,12 @@ This project is a 3D multiplayer game where one player controls David and anothe
 
 The host is responsible for preloading assets and maintaining the game state in memory. The guest connects to the host using WebRTC via manual signaling (SDP exchange). Both players can play the game after establishing the connection.
 
+The game is a first-person shooter (FPS) where David shoots stones from a slingshot, and Goliath thrusts with his spear.
+
+The game is responsive i.e. it offers a great user experience both on desktop browsers and mobile browsers:
+- Desktop browser relies on keyboard inputs (WASD for player position actions, spacebar for attack actions) and mouse/trackpad for player orientation actions (aiming)
+- Mobile browser relies on two virtual joysticks (left joystick for player position actions, right joystick for player orientation actions), and a button for attack actions.
+
 ### **Requirements**
 
 #### **Must Haves**:
@@ -34,8 +40,7 @@ The host is responsible for preloading assets and maintaining the game state in 
      - Provides a text area where the guest can paste the host’s SDP offer.
 
 4. **Asset Management**:
-   - The host must preload 3D models, textures, and assets (e.g., `.fbx` files) before the game starts.
-   - Store assets in the `/assets/` folder.
+   - The host must preload 3D models, textures, and assets (e.g., `.glb` files) before the game starts.
 
 5. **P2P Game Synchronization**:
    - Game state, including positions, actions (attacks), and health, must be synchronized between the host and guest in real-time using the WebRTC data channel.
@@ -76,7 +81,7 @@ The host is responsible for preloading assets and maintaining the game state in 
 3. **WebRTC**: For peer-to-peer connection and data transfer.
 4. **HTML5 & CSS3**: For the game’s interface.
 5. **JavaScript (ES6)**: For app logic and WebRTC integration.
-6. **Assets**: 3D models, textures, and any other game assets (stored locally in `/assets/`).
+6. **Assets**: 3D models, audio effects, and any other game assets.
 
 
 ### **Component Descriptions**
@@ -99,15 +104,26 @@ The host is responsible for preloading assets and maintaining the game state in 
 4. **Game.js**:
    - Implements the actual 3D game using Three.js.
    - Contains the game loop, rendering logic, and player movement/interaction.
+   - Imports the required user input components based on their device (desktop / mobile), for a responsive design
+   - Listens for the required user inputs depending on the device type (WASD and spacebar for desktop, VirtualJoystick components and AttackButton components for mobile)
+   - Implements the game physics (stone parabollic trajectory, determine hit/miss of stone on Goliath)
+   - Implements attack effectiveness and player health updates on hits.
+   - Implements audio effects for user inputs (slingshoot.wav, spearthrust.wav) and attack effectiveness (stonehit.wav, spearhit.wav) with the Web Audio API.
    - Synchronizes the game state (player positions, actions) between host and guest via WebRTC.
 
-5. **index.html**:
+5. **UI Components for the Game.js**:
+   - Mobile components: 
+        - VirtualJoystick.js: left / right joystick for position / orientation
+        - AttackButton.js: slingshot / spear action button for attack
+   - Desktop components: 
+        - WASDSpacebarVisualizer.js: helps the user visualize the WASD and spacebar key state for better UX (confirms that the game is correctly reading the user inputs)
+
+6. **index.html**:
    - The basic HTML structure for the React app.
    
-6. **Assets**:
-   - 3D models (e.g., David and Goliath characters) should be stored here.
-   - Other game assets (e.g., textures) should also be stored here.
-
+7. **Assets**:
+   - 3D models (david.glb, goliath.glb, slingshot.glb, stone.glb, spear.glb) should be stored here.
+   - Audio files for audio effects (slingshoot.wav, spearthrust.wav, stonehit.wav, spearhit.wav) should be stored here.
 
 ### **WebRTC Setup**
 
@@ -125,8 +141,7 @@ The host is responsible for preloading assets and maintaining the game state in 
    - Used for real-time synchronization of game state between host and guest (e.g., player movement, health status, attacks).
 
 
-### **Asset Preloading** (Host Only)
-- The host must preload 3D assets (stored in `/assets/`).
+### **Asset Preloading**
 - Preloading should occur while waiting for the guest to connect.
 - Use JavaScript’s `Promise.all()` to handle the preloading process and show a loading screen until complete.
 
