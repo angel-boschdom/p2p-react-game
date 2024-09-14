@@ -1,4 +1,4 @@
-## **Project Name**: David vs Goliath - P2P 3D Game
+## **David vs Goliath - P2P 3D React Game**:
 
 ### **Project Overview**
 

@@ -7,6 +7,8 @@ function GuestPage() {
   const [answer, setAnswer] = useState('');
   const [connected, setConnected] = useState(false);
   const [dataChannel, setDataChannel] = useState(null);
+  const [status, setStatus] = useState('Waiting for host’s SDP offer...');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const pc = new RTCPeerConnection();
@@ -16,7 +18,7 @@ function GuestPage() {
       const dc = event.channel;
       setDataChannel(dc);
       dc.onopen = () => {
-        console.log('Data channel opened');
+        setStatus('Connected!');
         setConnected(true);
       };
     };
@@ -29,32 +31,44 @@ function GuestPage() {
   }, []);
 
   const handleOfferSubmit = async () => {
-    const offerObj = JSON.parse(offer);
-    await peerConnection.setRemoteDescription(new RTCSessionDescription(offerObj));
-    const answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
+    if (peerConnection) {
+      try {
+        const offerObj = JSON.parse(offer);
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(offerObj));
+        setStatus('Processing offer...');
 
-    // Wait for ICE gathering to complete
-    await new Promise((resolve) => {
-      if (peerConnection.iceGatheringState === 'complete') {
-        resolve();
-      } else {
-        const checkState = () => {
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+
+        // Wait for ICE gathering to complete
+        await new Promise((resolve) => {
           if (peerConnection.iceGatheringState === 'complete') {
-            peerConnection.removeEventListener('icegatheringstatechange', checkState);
             resolve();
+          } else {
+            const checkState = () => {
+              if (peerConnection.iceGatheringState === 'complete') {
+                peerConnection.removeEventListener('icegatheringstatechange', checkState);
+                resolve();
+              }
+            };
+            peerConnection.addEventListener('icegatheringstatechange', checkState);
           }
-        };
-        peerConnection.addEventListener('icegatheringstatechange', checkState);
-      }
-    });
+        });
 
-    setAnswer(JSON.stringify(peerConnection.localDescription));
+        setAnswer(JSON.stringify(peerConnection.localDescription));
+        setStatus('SDP Answer generated! Copy and send it to the host.');
+      } catch (error) {
+        setError('Failed to process the offer: ' + error.message);
+        setStatus('Error occurred. Please try again.');
+      }
+    }
   };
 
   return (
     <div className="guest-page">
       <h2>Guest Page</h2>
+      {error && <div style={{ color: 'red' }}>{error}</div>}
+      <p>Status: {status}</p>
       {!connected ? (
         <>
           <div>
@@ -71,6 +85,7 @@ function GuestPage() {
             <div>
               <h3>SDP Answer:</h3>
               <textarea value={answer} readOnly rows={10} cols={50} />
+              <button onClick={() => navigator.clipboard.writeText(answer)}>Copy Answer</button>
             </div>
           )}
         </>

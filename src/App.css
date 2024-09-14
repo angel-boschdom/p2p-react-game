@@ -18,4 +18,43 @@
   
   textarea {
     margin: 10px 0;
+    width: 100%;
   }
+  
+  textarea:disabled {
+    background-color: #f0f0f0;
+  }
+  
+  .status-message {
+    font-size: 18px;
+    color: #007bff;
+    margin: 10px 0;
+  }
+  
+  .error-message {
+    color: red;
+  }
+  
+  textarea:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  textarea.read-only {
+    background-color: #f7f7f7;
+  }
+  
+  button.copy-button {
+    margin: 10px 0;
+    background-color: #007bff;
+    color: white;
+  }
+  
+  button.copy-button:hover {
+    background-color: #0056b3;
+  }
+  
+  textarea.highlight {
+    border: 2px solid green;
+  }
+  

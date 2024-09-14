@@ -5,6 +5,7 @@ function HostPage() {
   const [offer, setOffer] = useState('');
   const [answer, setAnswer] = useState('');
   const [connected, setConnected] = useState(false);
+  const [status, setStatus] = useState('Waiting to generate SDP offer...');
   const [error, setError] = useState(null);
 
   const peerConnectionRef = useRef(null);
@@ -13,7 +14,7 @@ function HostPage() {
   const createOffer = useCallback(async () => {
     if (peerConnectionRef.current) {
       try {
-        console.log('Creating offer...');
+        setStatus('Generating offer...');
         const offer = await peerConnectionRef.current.createOffer();
         await peerConnectionRef.current.setLocalDescription(offer);
 
@@ -32,27 +33,26 @@ function HostPage() {
           }
         });
 
-        console.log('Local description set with ICE candidates');
         setOffer(JSON.stringify(peerConnectionRef.current.localDescription));
+        setStatus('SDP Offer generated! Copy and send it to the guest.');
       } catch (error) {
-        console.error('Error creating offer:', error);
         setError('Failed to create offer: ' + error.message);
+        setStatus('Error occurred. Please try again.');
       }
     } else {
-      console.error('PeerConnection is null');
       setError('PeerConnection is not initialized');
+      setStatus('Error occurred. Please try again.');
     }
   }, []);
 
   useEffect(() => {
-    console.log('Initializing peer connection...');
     if (!peerConnectionRef.current) {
       peerConnectionRef.current = new RTCPeerConnection();
 
       dataChannelRef.current = peerConnectionRef.current.createDataChannel('gameData');
 
       dataChannelRef.current.onopen = () => {
-        console.log('Data channel opened');
+        setStatus('Connected!');
         setConnected(true);
       };
 
@@ -62,12 +62,10 @@ function HostPage() {
         }
       };
 
-      // Call createOffer here, after peerConnection is initialized
       createOffer();
     }
 
     return () => {
-      console.log('Cleaning up peer connection');
       if (peerConnectionRef.current) {
         peerConnectionRef.current.close();
         peerConnectionRef.current = null;
@@ -78,13 +76,12 @@ function HostPage() {
   const handleAnswerSubmit = async () => {
     if (peerConnectionRef.current) {
       try {
-        console.log('Setting remote description...');
         const answerObj = JSON.parse(answer);
         await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(answerObj));
-        console.log('Remote description set');
+        setStatus('SDP Answer received. Connecting...');
       } catch (error) {
-        console.error('Error setting remote description:', error);
         setError('Failed to set remote description: ' + error.message);
+        setStatus('Error occurred. Please try again.');
       }
     }
   };
@@ -92,12 +89,14 @@ function HostPage() {
   return (
     <div className="host-page">
       <h2>Host Page</h2>
-      {error && <div style={{color: 'red'}}>{error}</div>}
+      {error && <div style={{ color: 'red' }}>{error}</div>}
+      <p>Status: {status}</p>
       {!connected ? (
         <>
           <div>
             <h3>SDP Offer:</h3>
             <textarea value={offer} readOnly rows={10} cols={50} />
+            <button onClick={() => navigator.clipboard.writeText(offer)}>Copy Offer</button>
           </div>
           <div>
             <h3>Paste SDP Answer:</h3>
