@@ -2,9 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
-import VirtualJoystick from './VirtualJoystick';
-import AttackButton from './AttackButton';
-import WASDSpacebarVisualizer from './WASDSpacebarVisualizer';
+import InputManager from './InputManager';
 import useSound from 'use-sound';
 import './Game.css';
 
@@ -152,15 +150,12 @@ function Game({ isHost, dataChannel }) {
           </>
         )}
       </Canvas>
-      {/* Input components */}
-      {isMobile ? (
-        <>
-          <VirtualJoystick onMove={handleMove} onLook={handleLook} />
-          <AttackButton onAttack={handleAttack} />
-        </>
-      ) : (
-        <WASDSpacebarVisualizer />
-      )}
+      <InputManager
+        isMobile={isMobile}
+        onMove={handleMove}
+        onLook={handleLook}
+        onAttack={handleAttack}
+      />
     </div>
   );
 }

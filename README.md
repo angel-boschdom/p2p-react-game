@@ -104,7 +104,7 @@ The game is responsive i.e. it offers a great user experience both on desktop br
 4. **Game.js**:
    - Implements the actual 3D game using Three.js.
    - Contains the game loop, rendering logic, and player movement/interaction.
-   - Imports the required user input components based on their device (desktop / mobile), for a responsive design
+   - Imports the InputManager component which contains the required user input components based on their device (desktop / mobile), for a responsive design
    - Listens for the required user inputs depending on the device type (WASD and spacebar for desktop, VirtualJoystick components and AttackButton components for mobile)
    - Implements the game physics (stone parabollic trajectory, determine hit/miss of stone on Goliath)
    - Implements attack effectiveness and player health updates on hits.
