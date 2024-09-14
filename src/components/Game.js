@@ -1,7 +1,7 @@
 // /src/components/Game.js
 
-import React, { useEffect, useState, useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber'; // Added useFrame import
 import { useGLTF } from '@react-three/drei';
 import InputManager from './InputManager';
 import useSound from 'use-sound';
@@ -21,7 +21,13 @@ function ProjectileModel({ modelPath, position }) {
 }
 
 // Move the game logic into a new component that is rendered inside Canvas
-function GameScene({ isHost, dataChannel, inputState, playSlingshot, playSpearThrust, setGameState }) {
+function GameScene({
+  isHost,
+  dataChannel,
+  inputState,
+  playSlingshot,
+  playSpearThrust,
+}) {
   const physicsEngineRef = useRef(null);
   const [gameState, updateGameState] = useState({
     players: {},
@@ -57,6 +63,8 @@ function GameScene({ isHost, dataChannel, inputState, playSlingshot, playSpearTh
     if (dataChannel) {
       dataChannel.onmessage = (event) => {
         const data = JSON.parse(event.data);
+        console.log('Received data:', data);
+
         if (data.type === 'input') {
           // Update input state of the other player
           const otherPlayerId = isHost ? 'guest' : 'host';
@@ -99,6 +107,17 @@ function GameScene({ isHost, dataChannel, inputState, playSlingshot, playSpearTh
           })
         );
       }
+    } else {
+      // Guest sends input to host
+      if (dataChannel && dataChannel.readyState === 'open') {
+        dataChannel.send(
+          JSON.stringify({
+            type: 'input',
+            input: inputState,
+          })
+        );
+        console.log('Sent input:', inputState);
+      }
     }
 
     // Reset attack state after processing
@@ -123,7 +142,7 @@ function GameScene({ isHost, dataChannel, inputState, playSlingshot, playSpearTh
             player.position.y,
             player.position.z,
           ]}
-          rotation={[0, player.rotation.y, 0]}
+          rotation={[player.rotation.x, player.rotation.y, player.rotation.z]}
         />
       ))}
       {/* Render projectiles */}
@@ -158,7 +177,7 @@ function Game({ isHost, dataChannel }) {
 
   useEffect(() => {
     // Detect if mobile device
-    const userAgent = navigator.userAgent || window.navigator.userAgentData;
+    const userAgent = navigator.userAgent || '';
     setIsMobile(/android|iphone|ipad|mobile/i.test(userAgent));
   }, []);
 
@@ -170,14 +189,14 @@ function Game({ isHost, dataChannel }) {
     setInputState((prev) => ({ ...prev, look: vector }));
   };
 
-  const handleAttack = () => {
+  const handleAttack = useCallback(() => {
     setInputState((prev) => ({ ...prev, attack: true }));
     if (isHost) {
       playSlingshot();
     } else {
       playSpearThrust();
     }
-  };
+  }, [isHost, playSlingshot, playSpearThrust]);
 
   // Keyboard input handling for desktop
   useEffect(() => {
@@ -226,6 +245,40 @@ function Game({ isHost, dataChannel }) {
       return () => {
         window.removeEventListener('keydown', handleKeyDown);
         window.removeEventListener('keyup', handleKeyUp);
+      };
+    }
+  }, [isMobile, handleAttack]);
+
+  // Mouse movement handling for desktop
+  useEffect(() => {
+    if (!isMobile) {
+      const canvas = document.querySelector('canvas');
+      const sensitivity = 0.002;
+
+      const handleMouseMove = (e) => {
+        if (document.pointerLockElement === canvas) {
+          const movementX = e.movementX || 0;
+          const movementY = e.movementY || 0;
+          setInputState((prev) => ({
+            ...prev,
+            look: {
+              x: movementX * sensitivity,
+              y: movementY * sensitivity,
+            },
+          }));
+        }
+      };
+
+      const handleCanvasClick = () => {
+        canvas.requestPointerLock();
+      };
+
+      canvas.addEventListener('click', handleCanvasClick);
+      document.addEventListener('mousemove', handleMouseMove);
+
+      return () => {
+        canvas.removeEventListener('click', handleCanvasClick);
+        document.removeEventListener('mousemove', handleMouseMove);
       };
     }
   }, [isMobile]);

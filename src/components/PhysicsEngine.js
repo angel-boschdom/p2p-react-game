@@ -50,9 +50,41 @@ class PhysicsEngine {
   
     updatePlayerPosition(player, deltaTime) {
       const speed = player.speed || 5; // Units per second
-      player.position.x += player.input.move.x * speed * deltaTime;
-      player.position.z += player.input.move.y * speed * deltaTime;
-      // Update player rotation based on look input if necessary
+  
+      // Update rotation based on look input
+      player.rotation.y -= player.input.look.x;
+      player.rotation.x -= player.input.look.y;
+      // Optionally clamp the rotation.x to prevent flipping over
+      player.rotation.x = Math.max(
+        -Math.PI / 2,
+        Math.min(Math.PI / 2, player.rotation.x)
+      );
+  
+      // Reset look input after applying
+      player.input.look.x = 0;
+      player.input.look.y = 0;
+  
+      // Calculate forward and right vectors
+      const forward = {
+        x: Math.sin(player.rotation.y),
+        y: 0,
+        z: Math.cos(player.rotation.y),
+      };
+      const right = {
+        x: Math.sin(player.rotation.y + Math.PI / 2),
+        y: 0,
+        z: Math.cos(player.rotation.y + Math.PI / 2),
+      };
+  
+      // Update position based on move input
+      player.position.x +=
+        (forward.x * player.input.move.y + right.x * player.input.move.x) *
+        speed *
+        deltaTime;
+      player.position.z +=
+        (forward.z * player.input.move.y + right.z * player.input.move.x) *
+        speed *
+        deltaTime;
     }
   
     updateProjectile(projectile, deltaTime) {
@@ -125,4 +157,5 @@ class PhysicsEngine {
     }
   }
   
-  export default PhysicsEngine;  
+  export default PhysicsEngine;
+  
