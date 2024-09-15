@@ -134,8 +134,8 @@ function GameScene({
           key={player.playerId}
           modelPath={
             player.isHost
-              ? '/assets/models3d/david.glb'
-              : '/assets/models3d/goliath.glb'
+              ? `${process.env.PUBLIC_URL}/assets/models3d/david.glb`
+              : `${process.env.PUBLIC_URL}/assets/models3d/goliath.glb`
           }
           position={[
             player.position.x,
@@ -151,8 +151,8 @@ function GameScene({
           key={index}
           modelPath={
             projectile.ownerId === 'host'
-              ? '/assets/models3d/stone.glb'
-              : '/assets/models3d/spear.glb'
+              ? `${process.env.PUBLIC_URL}/assets/models3d/stone.glb`
+              : `${process.env.PUBLIC_URL}/assets/models3d/spear.glb`
           }
           position={[
             projectile.position.x,
@@ -172,8 +172,8 @@ function Game({ isHost, dataChannel }) {
     look: { x: 0, y: 0 },
     attack: false,
   });
-  const [playSlingshot] = useSound('/assets/audio/slingshoot.wav');
-  const [playSpearThrust] = useSound('/assets/audio/spearthrust.wav');
+  const [playSlingshot] = useSound(`${process.env.PUBLIC_URL}/assets/audio/slingshoot.wav`);
+  const [playSpearThrust] = useSound(`${process.env.PUBLIC_URL}/assets/audio/spearthrust.wav`);
 
   useEffect(() => {
     // Detect if mobile device
