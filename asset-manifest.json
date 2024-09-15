@@ -1,15 +1,13 @@
 {
   "files": {
-    "main.css": "/p2p-react-game/static/css/main.38c88e58.css",
-    "main.js": "/p2p-react-game/static/js/main.5c064459.js",
-    "static/js/885.e7d379a6.chunk.js": "/p2p-react-game/static/js/885.e7d379a6.chunk.js",
+    "main.css": "/p2p-react-game/static/css/main.8e74b3bd.css",
+    "main.js": "/p2p-react-game/static/js/main.e2fb90fd.js",
     "index.html": "/p2p-react-game/index.html",
-    "main.38c88e58.css.map": "/p2p-react-game/static/css/main.38c88e58.css.map",
-    "main.5c064459.js.map": "/p2p-react-game/static/js/main.5c064459.js.map",
-    "885.e7d379a6.chunk.js.map": "/p2p-react-game/static/js/885.e7d379a6.chunk.js.map"
+    "main.8e74b3bd.css.map": "/p2p-react-game/static/css/main.8e74b3bd.css.map",
+    "main.e2fb90fd.js.map": "/p2p-react-game/static/js/main.e2fb90fd.js.map"
   },
   "entrypoints": [
-    "static/css/main.38c88e58.css",
-    "static/js/main.5c064459.js"
+    "static/css/main.8e74b3bd.css",
+    "static/js/main.e2fb90fd.js"
   ]
 }
