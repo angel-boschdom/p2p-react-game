@@ -10,7 +10,7 @@ The game is a first-person shooter (FPS) where David shoots stones from a slings
 
 The game is responsive i.e. it offers a great user experience both on desktop browsers and mobile browsers:
 - Desktop browser relies on keyboard inputs (WASD for player position actions, spacebar for attack actions) and mouse/trackpad for player orientation actions (aiming)
-- Mobile browser relies on two virtual joysticks (left joystick for player position actions, right joystick for player orientation actions), and a button for attack actions.
+- Mobile browser display screen rotated 90 degrees left (to play more comfortably with both hands), and relies on two virtual joysticks (left joystick for player position actions, right joystick for player orientation actions), and a button for attack actions.
 
 ### **Requirements**
 
@@ -25,8 +25,8 @@ The game is responsive i.e. it offers a great user experience both on desktop br
 
 2. **Game Structure**:
    - **David vs Goliath Theme**:
-     - One player controls David (smaller, agile character).
-     - The other controls Goliath (larger, more powerful).
+     - One player controls David (weapon is a slinshot that can throw stones).
+     - The other controls Goliath (weapon is a spear).
    - Basic mechanics should include player movement, attack, and health system for each player.
    
 3. **Manual WebRTC Signaling**:
@@ -122,7 +122,11 @@ The game is responsive i.e. it offers a great user experience both on desktop br
    - The basic HTML structure for the React app.
    
 7. **Assets**:
-   - 3D models (david.glb, goliath.glb, slingshot.glb, stone.glb, spear.glb) should be stored here.
+   - 3D models:
+   - - enemycharacter.glb + its animations (run forward run backward, etc.)
+   - - slingshot.glb (contains one animation for shooting)
+   - - stone.glb (unanimated)
+   - - spear.glb (unanimated)
    - Audio files for audio effects (slingshoot.wav, spearthrust.wav, stonehit.wav, spearhit.wav) should be stored here.
 
 ### **WebRTC Setup**
@@ -160,3 +164,41 @@ The game is responsive i.e. it offers a great user experience both on desktop br
 ### **Deployment Considerations**
 - The entire app should be deployable as static files on a service like GitHub Pages, Vercel, or Netlify.
 - The game should work purely on the frontend with no backend interaction.
+
+### Progress Log (latest changes)
+
+#### Rotation on Mobile Devices:
+
+The game is rotated 90 degrees to the left on mobile devices by applying the mobile-rotated CSS class to the .game-container div in Game.js.
+The corresponding CSS in Game.css handles the rotation and ensures the game fills the screen correctly.
+
+#### Virtual Joystick Layout Fix:
+
+Adjusted the joystick positions in VirtualJoystick.js by setting the positions to { left: '25%', bottom: '25%' } for the left joystick and { right: '25%', bottom: '25%' } for the right joystick.
+Updated VirtualJoystick.css to ensure the joystick zones cover the correct areas and touch events are handled properly.
+
+#### Loading Animations into enemycharacter.glb:
+
+Created an AssetLoader.js module to handle loading the base character model and its animations.
+Used THREE.LoadingManager and GLTFLoader to load all assets before initializing the game.
+The Character.js component handles the character's model, animations, and updates based on the game state.
+
+#### Using the Shooting Animation from slingshot.glb:
+
+The slingshot model and its animation are loaded in AssetLoader.js.
+In Character.js, the slingshot is attached to the character's hand bone, and its animation is triggered when the player attacks.
+Separate animation mixers are used for the character and the slingshot to avoid conflicts.
+
+#### General Best Practices Applied:
+
+1. Modular Code Structure: Separated concerns by creating dedicated components (AssetLoader, Character).
+2. Efficient Asset Management: All assets are loaded asynchronously before starting the game.
+3. Responsive Design: The game adapts to both desktop and mobile devices, providing a consistent experience.
+4. Animation Handling: Proper use of AnimationMixer and AnimationAction for controlling animations.
+
+### Next Steps:
+
+1. Ensure all asset paths in AssetLoader.js and other files are correct relative to your project's structure.
+2. Replace placeholder bone names like 'Hand.R' with the actual bone names from your 3D models.
+3. Test the game thoroughly on both desktop and mobile devices to ensure all features work as expected.
+4. If any additional adjustments are needed (e.g., to AttackButton.js, InputManager.js), consider applying similar patterns.

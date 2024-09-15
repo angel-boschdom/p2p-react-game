@@ -1,4 +1,5 @@
-// /src/components/VirtualJoystick.js
+// src/components/VirtualJoystick.js
+
 import React, { useState, useEffect } from 'react';
 import nipplejs from 'nipplejs';
 import './VirtualJoystick.css';
@@ -12,7 +13,7 @@ function VirtualJoystick({ onMove, onLook }) {
     const leftOptions = {
       zone: document.getElementById('left-joystick'),
       mode: 'static',
-      position: { left: '50%', top: '50%' },
+      position: { left: '25%', bottom: '25%' },
       color: 'blue',
     };
     const left = nipplejs.create(leftOptions);
@@ -22,7 +23,7 @@ function VirtualJoystick({ onMove, onLook }) {
     const rightOptions = {
       zone: document.getElementById('right-joystick'),
       mode: 'static',
-      position: { left: '50%', top: '50%' },
+      position: { right: '25%', bottom: '25%' },
       color: 'red',
     };
     const right = nipplejs.create(rightOptions);
@@ -39,7 +40,7 @@ function VirtualJoystick({ onMove, onLook }) {
     if (leftJoystick) {
       leftJoystick.on('move', (evt, data) => {
         const { vector } = data;
-        onMove(vector);
+        onMove({ x: vector.x, y: vector.y });
       });
       leftJoystick.on('end', () => {
         onMove({ x: 0, y: 0 });
@@ -51,7 +52,7 @@ function VirtualJoystick({ onMove, onLook }) {
     if (rightJoystick) {
       rightJoystick.on('move', (evt, data) => {
         const { vector } = data;
-        onLook(vector);
+        onLook({ x: vector.x, y: vector.y });
       });
       rightJoystick.on('end', () => {
         onLook({ x: 0, y: 0 });

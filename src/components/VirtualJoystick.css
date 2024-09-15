@@ -1,16 +1,19 @@
-/* /src/components/VirtualJoystick.css */
+/* src/components/VirtualJoystick.css */
+
 .virtual-joystick-container {
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
+    pointer-events: none; /* Allow touch events to pass through */
   }
   
   .joystick-zone {
     position: absolute;
     width: 50%;
     height: 100%;
+    pointer-events: all; /* Enable touch events */
   }
   
   .joystick-zone.left {
@@ -19,5 +22,10 @@
   
   .joystick-zone.right {
     right: 0;
+  }
+  
+  /* Adjust the joystick positions */
+  .nipple {
+    z-index: 100;
   }
   
